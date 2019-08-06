@@ -71,7 +71,7 @@ typings/
 
 #secrets
 # THIS FILE SHOULD BE NOT INCLUDED IF PROJECT IS UPLOADED TO EXTERNAL SOURCE
-secrets.js
+# secrets.js
 
 
 
