@@ -28,7 +28,7 @@ router.get("/callback", function(req,res){
     console.log(authCode);
     topArtists.authorisationGrant(authCode)
         .then(data =>{
-            res.send("callback!");
+            res.redirect("http://localhost:8000/#!/view2");
         })
         .catch(err => {
             res.send("Something went wrong");
@@ -37,30 +37,56 @@ router.get("/callback", function(req,res){
 
 
 
+function sortFunction(a, b) {
+    if (a[1] === b[1]) {
+        return 0;
+    }
+    else {
+        return (a[1] > b[1]) ? -1 : 1;
+    }
+}
 
 router.get('/topArtists', function(req,res,next){
-    console.log("GET Request Received at top111");
+    // console.log("GET Request Received at top111");
 
     topArtists.getTopArtists()
-        .then(tracks => {
-            console.log("Retrieved getTopTracks successfully");
-            let tracksAndIDs = [];
-            // console.log(artists.items);
-            for (let i=0; i<tracks.items.length; i++){
-                artistsNames = "";
-                // console.log(tracks.items[i].artists);
-                for (let j=0; j<tracks.items[i].artists.length; j++){
-                    artistsNames =  artistsNames + tracks.items[i].artists[j].name + " ";
+        .then(artists => {
+            console.log("Retrieved getTopArtists successfully");
+            let artistNames =[];
+            let topGenres = [];
+            let genreCounts = [];
+
+            for (let i=0; i<artists.items.length; i++){
+                artistNames.push(artists.items[i].name);
+                for (let j=0; j<artists.items[i].genres.length; j++){
+
+                    if(topGenres.includes(artists.items[i].genres[j])){
+                        index = topGenres.indexOf(artists.items[i].genres[j]);
+                        genreCounts[index] += 1;
+                    } else {
+                        topGenres.push(artists.items[i].genres[j]);
+                        genreCounts.push(1);
+                    }
                 }
-                tracksAndIDs.push({
-                    "tracks": tracks.items[i].name,
-                    "artists": artistsNames,
-                    "uri": tracks.items[i].uri,
-                    "popularity": tracks.items[i].popularity
-                });
+
             }
 
-            res.send({"items": tracksAndIDs});
+
+            let genreRanks = [];
+            for (let i=0;i<topGenres.length;i++){
+                genreRanks.push([topGenres[i],genreCounts[i]]);
+            }
+
+            genreRanks.sort(sortFunction);
+
+            for (let i=0;i<genreRanks.length;i++){
+                console.log(genreRanks[i]);
+            }
+
+            //if genre . in  list, +1
+            //else add to list
+
+            res.send({"artistNames": artistNames,"genres": genreRanks});
 
         })
         .catch( err => {

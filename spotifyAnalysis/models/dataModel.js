@@ -28,17 +28,14 @@ var scopes = ['user-top-read'],
 var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
 
 
-
 // Get a token as part of app start
 refreshSpotifyAccessToken(false);
 
 
 function refreshSpotifyAccessToken(authorisationNeeded) {
     return new Promise((resolve, reject) => {
-        // authorisationNeeded = false;
-        if(authorisationNeeded){
-            console.log('auth needed');
 
+        if(authorisationNeeded){
             spotifyApi.refreshAccessToken().then(
                 function (data) {
 
@@ -174,7 +171,7 @@ exports.getTopArtists = () => {
             .then(() => {
                 spotifyApi.getMyTopArtists()
                     .then(function(data) {
-                      console.log(data);
+                      // console.log(data);
                       resolve(data.body);
                     }, function(err){
                         console.error(err);
